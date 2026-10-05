@@ -1,0 +1,26 @@
+name: Generate documentation
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-docs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Generate documentation
+        run: |
+          echo "# Документация проекта" > documentation.txt
+          echo "" >> documentation.txt
+          echo "Версия: $(cat VERSION.txt)" >> documentation.txt
+          echo "" >> documentation.txt
+          cat README.md >> documentation.txt
+
+      - name: Upload documentation artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: project-documentation
+          path: documentation.txt
