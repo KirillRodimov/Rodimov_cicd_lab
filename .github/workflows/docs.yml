@@ -1,26 +1,38 @@
 name: Generate documentation
 
 on:
+  push:
+    branches:
+      - main
+      - development
+
   workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   build-docs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Получение кода
         uses: actions/checkout@v4
 
-      - name: Generate documentation
+      - name: Установка Doxygen
         run: |
-          echo "# Документация проекта" > documentation.txt
-          echo "" >> documentation.txt
-          echo "Версия: $(cat VERSION.txt)" >> documentation.txt
-          echo "" >> documentation.txt
-          cat README.md >> documentation.txt
+          sudo apt-get update
+          sudo apt-get install -y doxygen
 
-      - name: Upload documentation artifact
+      - name: Генерация документации
+        run: doxygen Doxyfile
+
+      - name: Проверка результата
+        run: test -f doxygen-output/html/index.html
+
+      - name: Загрузка документации
         uses: actions/upload-artifact@v4
         with:
           name: project-documentation
-          path: documentation.txt
+          path: doxygen-output/html/
+          if-no-files-found: error
