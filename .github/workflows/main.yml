@@ -24,5 +24,9 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Пауза для демонстрации Auto-merge
+        if: github.event_name == 'pull_request'
+        run: sleep 120
+
       - name: Запуск unit-тестов
         run: python test_calculator.py
